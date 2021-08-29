@@ -115,5 +115,32 @@ namespace TimeAzureFunction.Function.Functions
                 Result = timeEntity
             });
         }
+
+
+        [FunctionName(nameof(GetAllTime))]
+        public static async Task<IActionResult> GetAllTime(
+           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "times")] HttpRequest req,
+           [Table("times", Connection = "AzureWebJobsStorage")] CloudTable timesTable,
+           ILogger log)
+        {
+            log.LogInformation("Get All times received");
+
+
+            TableQuery<TimesEntity> query = new TableQuery<TimesEntity>();
+            TableQuerySegment<TimesEntity> times = await timesTable.ExecuteQuerySegmentedAsync(query, null);
+
+
+            string message = "Retrieved all times";
+            log.LogInformation(message);
+
+
+
+            return new OkObjectResult(new Response
+            {
+                IsSucces = true,
+                Message = message,
+                Result = times
+            });
+        }
     }
 }
