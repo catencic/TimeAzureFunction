@@ -174,5 +174,42 @@ namespace TimeAzureFunction.Function.Functions
                 Result = timesEntity
             });
         }
+
+
+        [FunctionName(nameof(DeleteTime))]
+        public static async Task<IActionResult> DeleteTime(
+           [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "times/{id}")] HttpRequest req,
+           [Table("times", "TIME", "{id}", Connection = "AzureWebJobsStorage")] TimesEntity timesEntity,
+            [Table("times", Connection = "AzureWebJobsStorage")] CloudTable timesTable,
+
+           string id,
+           ILogger log)
+        {
+            log.LogInformation($"Delete time: {id}, received.");
+
+
+            if (timesEntity == null)
+            {
+                return new BadRequestObjectResult(new Response
+                {
+                    IsSucces = false,
+                    Message = "Time not found."
+                });
+            }
+
+
+            await timesTable.ExecuteAsync(TableOperation.Delete(timesEntity));
+            string message = $"Time: {timesEntity.RowKey}, delete.";
+            log.LogInformation(message);
+
+
+
+            return new OkObjectResult(new Response
+            {
+                IsSucces = true,
+                Message = message,
+                Result = timesEntity
+            });
+        }
     }
 }
