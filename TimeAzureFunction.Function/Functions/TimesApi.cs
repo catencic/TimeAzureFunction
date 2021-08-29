@@ -142,5 +142,37 @@ namespace TimeAzureFunction.Function.Functions
                 Result = times
             });
         }
+
+        [FunctionName(nameof(GetTimeById))]
+        public static IActionResult GetTimeById(
+           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "times/{id}")] HttpRequest req,
+           [Table("times", "TIME", "{id}", Connection = "AzureWebJobsStorage")] TimesEntity timesEntity,
+           string id,
+           ILogger log)
+        {
+            log.LogInformation($"Get time by id: {id}, received.");
+
+
+            if (timesEntity == null)
+            {
+                return new BadRequestObjectResult(new Response
+                {
+                    IsSucces = false,
+                    Message = "Time not found."
+                });
+            }
+
+            string message = $"Time: {timesEntity.RowKey}, retrievet.";
+            log.LogInformation(message);
+
+
+
+            return new OkObjectResult(new Response
+            {
+                IsSucces = true,
+                Message = message,
+                Result = timesEntity
+            });
+        }
     }
 }
