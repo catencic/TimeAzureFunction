@@ -9,6 +9,6 @@ namespace TimeAzureFunction.Function.Entities
 
         public DateTime Time { get; set; }
 
-        public int minutesWorked { get; set; }
+        public TimeSpan minutesWorked { get; set; }
     }
 }

@@ -8,6 +8,6 @@ namespace TimeAzureFunction.Common.Models
 
         public DateTime Time { get; set; }
 
-        public int minutesWorked { get; set; }
+        public TimeSpan minutesWorked { get; set; }
     }
 }
